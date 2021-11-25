@@ -19,7 +19,7 @@ if not os.path.exists(os.path.abspath(".") + annotation_folder):
         extract=True,
     )
 
-path = "val/indoors"
+path = "val/outdoors"
 
 filelist = []
 
