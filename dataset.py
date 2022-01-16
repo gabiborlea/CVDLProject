@@ -1,48 +1,43 @@
 import os
 
 import tensorflow as tf
-from tensorflow.keras import layers
 
 import pandas as pd
 import numpy as np
 import cv2
-import matplotlib.pyplot as plt
 
 tf.random.set_seed(123)
 
-annotation_folder = "/dataset/"
-if not os.path.exists(os.path.abspath(".") + annotation_folder):
-    annotation_zip = tf.keras.utils.get_file(
-        "val.tar.gz",
-        cache_subdir=os.path.abspath("."),
-        origin="http://diode-dataset.s3.amazonaws.com/val.tar.gz",
-        extract=True,
-    )
 
-path = "val/outdoors"
+def load_data_frame():
+    annotation_folder = "/dataset/"
+    if not os.path.exists(os.path.abspath(".") + annotation_folder):
+        annotation_zip = tf.keras.utils.get_file(
+            "val.tar.gz",
+            cache_subdir=os.path.abspath("."),
+            origin="http://diode-dataset.s3.amazonaws.com/val.tar.gz",
+            extract=True,
+        )
 
-filelist = []
+    path = "val/outdoor"
 
-for root, dirs, files in os.walk(path):
-    for file in files:
-        filelist.append(os.path.join(root, file))
+    filelist = []
 
-filelist.sort()
-data = {
-    "image": [x for x in filelist if x.endswith(".png")],
-    "depth": [x for x in filelist if x.endswith("_depth.npy")],
-    "mask": [x for x in filelist if x.endswith("_depth_mask.npy")],
-}
-df = pd.DataFrame(data)
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            filelist.append(os.path.join(root, file))
 
-df = df.sample(frac=1, random_state=42)
+    filelist.sort()
+    data = {
+        "image": [x for x in filelist if x.endswith(".png")],
+        "depth": [x for x in filelist if x.endswith("_depth.npy")],
+        "mask": [x for x in filelist if x.endswith("_depth_mask.npy")],
+    }
+    df = pd.DataFrame(data)
 
+    df = df.sample(frac=1, random_state=42)
 
-HEIGHT = 256
-WIDTH = 256
-LR = 0.0002
-EPOCHS = 30
-BATCH_SIZE = 32
+    return df
 
 
 class DataGenerator(tf.keras.utils.Sequence):
