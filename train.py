@@ -42,6 +42,7 @@ history = model.fit(
 model.summary()
 
 model.save('saved_models/depth_model')
+np.save('saved_losses/loss2', history.history['loss'])
 
 plt.plot(history.history['loss'], label='loss')
 plt.ylabel('Loss')
